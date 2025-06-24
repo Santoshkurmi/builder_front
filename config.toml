@@ -18,66 +18,59 @@ address_type = "ip"          # Options: "ip", "hostname"
 allowed_addresses = ["127.0.0.1", "::1", "192.168.1.100"] # can be ip or hostname not both
 allowed_tokens = ["12345678901234567890123456789012"] # list of token if auth_type is token
 
-[projects]  #list of projects
-
-  [projects.school_app] # this is project school_app
-    allow_multi_build = true       # Builds run one at a time (not parallel) in sequence, if false, only one build run at a time
-    max_pending_build = 10         # Max queued builds (large value = unlimited-like)
-    base_endpoint_path="/api/school"  # base api endpoints of this project
-    next_build_delay = 60 #in seconds to wait for next build
+[project]
+allow_multi_build = true
+max_pending_build = 10
+# base_endpoint_path = "/api/school"
+next_build_delay = 60
 
 
+[project.build]
+project_path = "/home/cat/school_build"
+payload = [{type = "env", value = "aa", key = "tiger"}]
+unique_build_key = "package_name"
+on_success_failure = "http://127.0.0.1:8000/api/update/logs"
+on_success_error_payload = [{type = "env", value = "aa", key = "tiger"}]
+run_on_failure = []
 
-    [projects.school_app.auth]
-    auth_type = "address"       # Options: "token", "address", "both"
-    address_type = "ip"         # Options: "ip", "hostname"
-    allowed_addresses = ["127.0.0.1", "::1", "192.168.1.100"]
-    allowed_tokens = ["12345678901234567890123456789012"]
+[[project.build.run_on_success]]
+command = "echo 1 && sleep 20"
+title = "Running dummy logs"
+send_to_sock = true
 
-    [projects.school_app.build]
-    project_path = "/home/cat/school_build"
-    payload = [{type="env",value="aa",key= "tiger"}] # $variable means the api will send this in json key, $ means the value of this is passed in environment variable while running build and without dollar means it will be stored in runtime of the build to later so something with it
-    unique_build_key = "package_name" # add one uniqyue build key to know the build uniqueness
+[[project.build.run_on_error]]
+command = "echo 1 && sleep 20"
+title = "Running dummy logs"
+send_to_sock = true
 
-    on_success_failure = "http://127.0.0.1:8000/api/update/logs" #place empty if dont want to send anywhere
-    # on_failure = "http://127.0.0.1:8000/api/update/logs"
-    on_success_error_payload = [{type="env",value="aa",key= "tiger"}]
-    # on_failure_payload = ["$package_name", "$status", "$token", "$shell"]
 
-    [[projects.school_app.build.run_on_success]]
-    command = "echo 1 && sleep 20"
-    title = "Running dummy logs"
-    send_to_sock = true
+[[project.build.commands]]
+command = "echo 15 && sleep 20"
+on_error = "abort"
+title = "Running dummy logs"
+send_to_sock = true
 
-    run_on_failure = []
+[[project.build.commands]]
+command = "echo 2 && sleep 5"
+title = "Running dummy logs"
+send_to_sock = true
 
-    [[projects.school_app.build.commands]]
-    command = "echo 15 && sleep 20"
-    on_error = "abort"
-    title = "Running dummy logs"
-    send_to_sock = true
+[[project.build.commands]]
+command = "echo 3 && sleep 5"
+title = "Running dummy logs"
+send_to_sock = true
 
-    [[projects.school_app.build.commands]]
-    command = "echo 2 && sleep 5"
-    title = "Running dummy logs"
-    send_to_sock = true
+[[project.build.commands]]
+command = "echo 3 && sleep 5"
+title = "Running dummy logs"
+send_to_sock = true
 
-    [[projects.school_app.build.commands]]
-    command = "echo 3 && sleep 5"
-    title = "Running dummy logs"
-    send_to_sock = true
+[[project.build.commands]]
+command = "echo 4 && sleep 5"
+title = "Running dummy logs"
+send_to_sock = true
 
-    [[projects.school_app.build.commands]]
-    command = "echo 3 && sleep 5"
-    title = "Running dummy logs"
-    send_to_sock = true
-
-    [[projects.school_app.build.commands]]
-    command = "echo 4 && sleep 5"
-    title = "Running dummy logs"
-    send_to_sock = true
-
-    [[projects.school_app.build.commands]]
-    command = "echo 5 && sleep 5"
-    title = "Last Step"
-    send_to_sock = true
+[[project.build.commands]]
+command = "echo 5 && sleep 5"
+title = "Last Step"
+send_to_sock = true

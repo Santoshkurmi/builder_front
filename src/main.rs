@@ -15,7 +15,7 @@ fn main() {
     let config = config.unwrap();
     println!(
         "{}",
-        config.projects.get("school_app").unwrap().max_pending_build
+        config.project.max_pending_build
     );
 
     println!("{}", add(4, 5));
