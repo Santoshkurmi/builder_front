@@ -5,7 +5,7 @@ name = "Android App Builder"  # Name of the system which is not compulsary and w
 port = 8080   #Port to run the server on
 base_path = "/home/cat/"      # Leave empty to use absolute path of the projects
 log_path = "logs"   #Path to store logs, if project specific logs are not provided
-
+enable_logs = true
 [ssl]
 enable_ssl = false
 certificate_path = "cert.pem" # This are absolute path of the certificate and key
@@ -22,7 +22,7 @@ allowed_tokens = ["12345678901234567890123456789012"] # list of token if auth_ty
 allow_multi_build = true
 max_pending_build = 10
 # base_endpoint_path = "/api/school"
-next_build_delay = 60
+next_build_delay = 5
 
 
 [project.build]
@@ -34,39 +34,39 @@ on_success_error_payload = [{type = "env", value = "aa", key = "tiger"}]
 run_on_failure = []
 
 [[project.build.run_on_success]]
-command = "echo 1 && sleep 20"
+command = "echo 'test' && echo 'tiger' && safsdfsd"
 title = "Running dummy logs"
 send_to_sock = true
 
 [[project.build.run_on_error]]
-command = "echo 1 && sleep 20"
+command = "echo 1 && sleep 5"
 title = "Running dummy logs"
 send_to_sock = true
 
 
 [[project.build.commands]]
-command = "echo 15 && sleep 20"
+command = "echo 'test' && echo 'tiger'"
 on_error = "abort"
 title = "Running dummy logs"
 send_to_sock = true
 
 [[project.build.commands]]
-command = "echo 2 && sleep 5"
+command = "echo 2 && sleep 1"
 title = "Running dummy logs"
 send_to_sock = true
 
 [[project.build.commands]]
-command = "echo 3 && sleep 5"
+command = "echo 3 && sleep 1"
 title = "Running dummy logs"
 send_to_sock = true
 
 [[project.build.commands]]
-command = "echo 3 && sleep 5"
+command = "echo 3 && sleep 1"
 title = "Running dummy logs"
 send_to_sock = true
 
 [[project.build.commands]]
-command = "echo 4 && sleep 5"
+command = "echo 4 && sleep 1"
 title = "Running dummy logs"
 send_to_sock = true
 

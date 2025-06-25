@@ -1,22 +1,47 @@
-use builder::{add, models::config::Config};
+use actix_web::{web, App, HttpServer};
+use builder::{build::{abort::{self, abort, abort_all}, handle_build::build_initialize}, models::{app_state::{AppState, ChannelMessage}, config::Config}, socket::{handle_socket::connect_and_stream_ws, handle_socket_project::connect_and_stream_ws_project}};
+use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 
-fn main() {
-    println!(
-        "\n\n****************************\nStarting the server\n****************************\n\n"
-    );
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    
+    env_logger::init();
+    // Load configuration
+    let config = Config::load("config.toml").expect("Failed to load config");
+    let port = config.port;
+    let ssl_enabled = config.ssl.enable_ssl;
+    
+    let certificate_key_path = config.ssl.certificate_key_path.clone();
+    let cetificate_path = config.ssl.certificate_path.clone();
 
-    let config = Config::load("config.toml");
 
-    if let Err(error) = config {
-        println!("Loading config Error: {}", error.to_string());
-        return;
+    // Create shared application state
+    let app_state = AppState::new(config).await;
+
+    
+    let app_data = web::Data::new(app_state);
+
+
+    println!("Starting server on port {}", port);
+    let server = HttpServer::new(move || {
+        let  app = App::new()
+            .app_data(app_data.clone())
+            .service(web::resource("/api/build").route(web::post().to(build_initialize)))
+            .service(web::resource("/api/build/connect").route(web::get().to(connect_and_stream_ws)))
+            .service(web::resource("/api/project/connect").route(web::get().to(connect_and_stream_ws_project)))
+            .service(web::resource("/api/project/abort").route(web::post().to(abort_all)))
+            .service(web::resource("/api/build/abort").route(web::post().to(  abort  )))
+            ;
+        app
+    });
+    
+    if ssl_enabled {
+        let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
+        builder.set_private_key_file(&certificate_key_path, SslFiletype::PEM).unwrap();
+        builder.set_certificate_chain_file(&cetificate_path).unwrap();
+        
+        server.bind_openssl(format!("0.0.0.0:{}", port), builder)?.run().await
+    } else {
+        server.bind(("0.0.0.0", port))?.run().await
     }
-
-    let config = config.unwrap();
-    println!(
-        "{}",
-        config.project.max_pending_build
-    );
-
-    println!("{}", add(4, 5));
 }

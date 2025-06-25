@@ -383,7 +383,26 @@ dependencies = [
 name = "builder_user"
 version = "0.1.0"
 dependencies = [
+ "actix-web",
+ "actix-ws",
+ "anyhow",
+ "base64 0.21.7",
  "builder",
+ "chrono",
+ "dirs",
+ "env_logger",
+ "futures-util",
+ "log",
+ "openssl",
+ "rand 0.8.5",
+ "regex",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-stream",
+ "toml",
+ "uuid",
 ]
 
 [[package]]
