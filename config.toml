@@ -27,10 +27,14 @@ next_build_delay = 5
 
 [project.build]
 project_path = "/home/cat/school_build"
-payload = [{type = "env", value = "aa", key = "tiger"}]
+payload = [
+    {type = "file", key2 = "test/a.json", key1 = "a"},
+    {type = "env", key2 = "NAME", key1 = "name"},
+    {type = "env", key2 = "AGE", key1 = "age"},
+]
 unique_build_key = "package_name"
 on_success_failure = "http://127.0.0.1:8000/api/update/logs"
-on_success_error_payload = [{type = "env", value = "aa", key = "tiger"}]
+on_success_error_payload = [{type = "file", key2 = "a.json", key1 = "a"}]
 run_on_failure = []
 
 [[project.build.run_on_success]]
@@ -45,7 +49,7 @@ send_to_sock = true
 
 
 [[project.build.commands]]
-command = "echo 'test' && echo 'tiger'"
+command = "echo $NAME && echo $AGE"
 on_error = "abort"
 title = "Running dummy logs"
 send_to_sock = true
