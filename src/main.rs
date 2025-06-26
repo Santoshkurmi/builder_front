@@ -1,5 +1,5 @@
 use actix_web::{web, App, HttpServer};
-use builder::{build::{abort::{self, abort, abort_all}, handle_build::build_initialize}, models::{app_state::{AppState, ChannelMessage}, config::Config}, socket::{handle_socket::connect_and_stream_ws, handle_socket_project::connect_and_stream_ws_project}};
+use builder::{build::{abort::{self, abort, abort_all}, build_init::build_initialize}, models::{app_state::{AppState, ChannelMessage}, config::Config}, refresh::handle_refresh::handle_error_refresh, socket::{handle_socket::connect_and_stream_ws, handle_socket_project::connect_and_stream_ws_project}};
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 
 #[actix_web::main]
@@ -31,6 +31,7 @@ async fn main() -> std::io::Result<()> {
             .service(web::resource("/api/project/connect").route(web::get().to(connect_and_stream_ws_project)))
             .service(web::resource("/api/project/abort").route(web::post().to(abort_all)))
             .service(web::resource("/api/build/abort").route(web::post().to(  abort  )))
+            .service(web::resource("/api/errors").route(web::post().to(  handle_error_refresh  )))
             ;
         app
     });

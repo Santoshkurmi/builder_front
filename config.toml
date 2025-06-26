@@ -3,8 +3,7 @@
 
 name = "Android App Builder"  # Name of the system which is not compulsary and wont be shown anywhere
 port = 8080   #Port to run the server on
-base_path = "/home/cat/"      # Leave empty to use absolute path of the projects
-log_path = "logs"   #Path to store logs, if project specific logs are not provided
+log_path = "/home/cat/logs"   #Path to store logs, if project specific logs are not provided
 enable_logs = true
 [ssl]
 enable_ssl = false
@@ -21,41 +20,56 @@ allowed_tokens = ["12345678901234567890123456789012"] # list of token if auth_ty
 [project]
 allow_multi_build = true
 max_pending_build = 10
+flush_interval = 1_000 # in millsecond time of interval to flush logs to socket or anywhere must be greater than 500 else ignored
 # base_endpoint_path = "/api/school"
 next_build_delay = 5
+project_path = "/home/cat/project_builder/builder_front"
 
 
 [project.build]
-project_path = "/home/cat/school_build"
 payload = [
-    {type = "file", key2 = "test/a.json", key1 = "a"},
+    # {type = "file", key2 = "test/a.json", key1 = "a"},
     {type = "env", key2 = "NAME", key1 = "name"},
     {type = "env", key2 = "AGE", key1 = "age"},
+    {type = "param",  key1 = "secret"},
 ]
 unique_build_key = "package_name"
+
 on_success_failure = "http://127.0.0.1:8000/api/update/logs"
-on_success_error_payload = [{type = "file", key2 = "a.json", key1 = "a"}]
-run_on_failure = []
+on_success_error_payload = [
+    {type = "env", key2 = "SECRET", key1 = "secret"},
+    # {type = "file", key2 = "src/main.rs", key1 = "main"}
+]
+
 
 [[project.build.run_on_success]]
-command = "echo 'test' && echo 'tiger' && safsdfsd"
+command = "echo 'Running on success' && echo 'tiger' "
 title = "Running dummy logs"
 send_to_sock = true
 
-[[project.build.run_on_error]]
-command = "echo 1 && sleep 5"
+[[project.build.run_on_failure]]
+command = "echo 'Running on failure' && sleep 5"
+title = "Running dummy logs"
+send_to_sock = true
+
+# Now here the main command to handle and run
+
+
+[[project.build.commands]]
+command = "pwd"
 title = "Running dummy logs"
 send_to_sock = true
 
 
 [[project.build.commands]]
-command = "echo $NAME && echo $AGE"
-on_error = "abort"
+command = "echo $NAME && echo $AGE && echo {secret} && export SECRET=123456"
+abort_on_error = true
 title = "Running dummy logs"
+extract_envs = ["SECRET"]
 send_to_sock = true
 
 [[project.build.commands]]
-command = "echo 2 && sleep 1"
+command = "echoss $SECRET && sleep 1 "
 title = "Running dummy logs"
 send_to_sock = true
 
