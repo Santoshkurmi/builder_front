@@ -20,18 +20,18 @@ allowed_tokens = ["12345678901234567890123456789012"] # list of token if auth_ty
 [project]
 allow_multi_build = true
 max_pending_build = 10
-flush_interval = 1_000 # in millsecond time of interval to flush logs to socket or anywhere must be greater than 500 else ignored
+flush_interval = 5_000 # in millsecond time of interval to flush logs to socket or anywhere must be greater than 500 else ignored
 # base_endpoint_path = "/api/school"
-next_build_delay = 5
+next_build_delay = 1
 project_path = "/home/cat/project_builder/builder_front"
 
 
 [project.build]
 payload = [
     # {type = "file", key2 = "test/a.json", key1 = "a"},
-    {type = "env", key2 = "NAME", key1 = "name"},
-    {type = "env", key2 = "AGE", key1 = "age"},
-    {type = "param",  key1 = "secret"},
+    # {type = "env", key2 = "NAME", key1 = "name"},
+    # {type = "env", key2 = "AGE", key1 = "age"},
+    # {type = "param",  key1 = "secret"},
 ]
 unique_build_key = "package_name"
 
@@ -56,20 +56,20 @@ send_to_sock = true
 
 
 [[project.build.commands]]
-command = "pwd"
+command = "echo 'TIGER' && pwd && sleep 5"
 title = "Running dummy logs"
 send_to_sock = true
 
 
 [[project.build.commands]]
-command = "echo $NAME && echo $AGE && echo {secret} && export SECRET=123456"
+command = "echo $NAME && echo $AGE && echo {secret} && export SECRET=123456 && sleep 5"
 abort_on_error = true
 title = "Running dummy logs"
 extract_envs = ["SECRET"]
 send_to_sock = true
 
 [[project.build.commands]]
-command = "echoss $SECRET && sleep 1 "
+command = "echo $SECRET && sleep 1 "
 title = "Running dummy logs"
 send_to_sock = true
 
